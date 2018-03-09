@@ -4,10 +4,17 @@
 Apache Spark是一个开源集群运算框架，我们将用一个简单的例子了解它。这里，我们在Arch Linux操作系统下进行实验。
 
 ## Apache Spark简介(摘自[维基百科词条](https://zh.wikipedia.org/wiki/Apache_Spark))
-Apache Spark是一个开源集群运算框架，最初是由加州大学柏克莱分校AMPLab所开发。相对于Hadoop的MapReduce会在运行完工作后将中介数据存放到磁盘中，Spark使用了内存内运算技术，能在数据尚未写入硬盘时即在内存内分析运算。Spark在内存内运行程序的运算速度能做到比Hadoop MapReduce的运算速度快上100倍，即便是运行程序于硬盘时，Spark也能快上10倍速度。Spark允许用户将数据加载至集群内存，并多次对其进行查询，非常适合用于机器学习算法。
+Apache Spark是一个开源集群运算框架，最初是由加州大学柏克莱分校AMPLab所开发。
+
+相对于Hadoop的MapReduce会在运行完工作后将中介数据存放到磁盘中，Spark使用了内存内运算技术，能在数据尚未写入硬盘时即在内存内分析运算。
+
+Spark在内存内运行程序的运算速度能做到比Hadoop MapReduce的运算速度快上100倍，即便是运行程序于硬盘时，Spark也能快上10倍速度。
+
+Spark允许用户将数据加载至集群内存，并多次对其进行查询，非常适合用于机器学习算法。
 
 ## 问题
 一个简单的例子，有一些小朋友，他们想要吃水果，我们用一张表列出小朋友们的需求。
+
 名字|水果
 ----|----
 Sam|apple,pear
@@ -47,7 +54,7 @@ sudo pip install pyspark
 ## 实验 
 
 ### 数据 
-文件名: fruit.txt
+文件名: *fruit.txt*
 ```
 Sam:apple,pear
 Amy:apple
@@ -60,7 +67,7 @@ Tom:watermelon
 
 ### 代码
 
-文件名: fruit.py
+文件名: *fruit.py*
 ```python
 #coding=utf-8
 from pyspark import SparkConf, SparkContext
@@ -109,14 +116,21 @@ spark-submit fruit.py
 命令输入后，Spark将开始运行。
 
 ## 实验原理
-`parseText`函数读入字符串，将输入文本转为`(水果, 人名)`的数组，其中水果为关键字`(key)`
-`map`函数: 将一个元素变为`(key, value)`对，例子中用匿名函数`lambda x : x[0], x[1]`将元素转为`(x[0], x[1])`对，其中`x[0]`为`key`, `x[1]`为`value`
-`reduceByKey`函数: 合并`key`相同的两个元组，如合并`("apple", "Sam")`, `("apple", "Amy")`两个元组，得到`("apple", "Sam,Amy")`
+- parseText函数
+    读入字符串，将输入文本转为`(水果, 人名)`的数组，其中水果为关键字`(key)`
+
+- map函数
+     将一个元素变为`(key, value)`对，例子中用匿名函数`lambda x : x[0], x[1]`将元素转为`(x[0], x[1])`对，其中`x[0]`为`key`, `x[1]`为`value`
+
+- reduceByKey函数
+    合并`key`相同的两个元组，如合并`("apple", "Sam")`, `("apple", "Amy")`两个元组，得到`("apple", "Sam,Amy")`
 
 ## 实验结果
-我们将看见, 在工作目录下(fruit.py)生成了一个out文件夹，进入文件夹，里面存放着名为part-xxxxx的文件(如: part-00000, part-00001)和一个_SUCCESS文件。
+我们将看见, 在工作目录( *fruit.py*所在目录 )下，生成了一个*out*文件夹。
 
-输入命令
+进入文件夹，里面存放着名为*part-xxxxx*的文件(如: *part-00000*, *part-00001*)和一个*_SUCCESS*文件。
+
+我们可以合并*part-xxxxx*文件, 输入命令:
 ```bash
 cat part-* > result.txt
 ```
